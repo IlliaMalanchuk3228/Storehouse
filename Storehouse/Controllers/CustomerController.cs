@@ -3,7 +3,7 @@ using BLL.Interfaces;
 using DAL.DataModels;
 using DAL.Entities;
 using Microsoft.AspNetCore.Mvc;
-
+ 
 namespace Storehouse.Controllers
 {
     [ApiController]
@@ -24,14 +24,9 @@ namespace Storehouse.Controllers
             await _customerManager.CreatesCustomer(customerModel);
         }
         
-        // [Route("joinOrderAndCustomer")]
-        // [HttpPatch]
-        // public async Task UpdateOrdersInCustomer(int orderId, int customerId)
-        // {
-        //     await _customerManager.JoinOrderAndCustomer(orderId, customerId);
-        // }
         
-        [Route("getCustomer")]
+        
+        [Route("getCustomer/{customerId}")]
         [HttpGet]
         public async Task<CustomerModel> GetCustomer(int customerId)
         {
