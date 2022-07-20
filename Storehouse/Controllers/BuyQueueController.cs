@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using BLL.Interfaces;
 using DAL.DataModels;
-
+ 
 namespace Storehouse.Controllers
 {
     [ApiController]
@@ -17,19 +17,27 @@ namespace Storehouse.Controllers
         }
         
         //POST
-        [Route("oleni")]
+        [Route("createBuyQueue")]
         [HttpPost]
         public async Task CreateBuyQueues(BuyQueueModel buyQueueModel)
         {
-            await _buyQueueManager.CreatesBuyQueue(buyQueueModel);
+            await _buyQueueManager.CreateBuyQueue(buyQueueModel);
+        }
+        
+        //GET
+        [Route("getBuyQueue")]
+        [HttpGet]
+        public async Task<BuyQueueModel> GetBuyQueues(int buyQueueId)
+        {
+           return await _buyQueueManager.GetBuyQueuesByIdAsync(buyQueueId);
         }
         
         //POST
-        [Route("pogus")]
-        [HttpPost]
-        public async Task AddItemInBuyQueue(int idProduct)
+        [Route("updateBuyQueue")]
+        [HttpPut]
+        public async Task UpdateBuyQueues(int productId)
         {
-            await _buyQueueManager.AddItemInBuyQueues(idProduct);
+            await _buyQueueManager.AddingToBuyQueue(productId);
         }
         
     }
