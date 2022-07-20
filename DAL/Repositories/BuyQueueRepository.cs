@@ -6,7 +6,7 @@ using DAL.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Repositories
-{
+{ 
     public class BuyQueueRepository : Repository<BuyQueueModel>, IBuyQueueRepository
     {
         private readonly DataContext _dataContext;
@@ -22,7 +22,14 @@ namespace DAL.Repositories
             _dataContext.BuyQueues.Add(entity);
             await _dataContext.SaveChangesAsync();
         }
-        
+
+        public async Task Update(BuyQueueModel buyQueueModel)
+        {
+            var entity = MapperInstance.Map<BuyQueue>(buyQueueModel);
+            _dataContext.BuyQueues.Update(entity);
+            await _dataContext.SaveChangesAsync();
+        }
+
         public async Task<BuyQueueModel> GetBuyQueueByIdAsync(int id)
         {
             var entity = await _dataContext.BuyQueues.FirstOrDefaultAsync(buyQueue => buyQueue.Id == id);
