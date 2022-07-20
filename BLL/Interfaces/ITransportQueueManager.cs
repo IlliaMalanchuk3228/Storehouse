@@ -4,8 +4,8 @@ using DAL.DataModels;
 namespace BLL.Interfaces
 {
     public interface ITransportQueueManager
-    {
-        Task CreatesTransportQueue(TransportQueueModel transportQueueModel);
-        Task AddItemInTransportQueues (int id);
+    { 
+        Task<TransportQueueModel> GetTransportQueueById(int transportQueueId);
+        Task AddingToTransportQueue(int buyQueueId);
     }
 }
