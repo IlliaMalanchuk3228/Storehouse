@@ -13,107 +13,58 @@ namespace BLL.Iml
         private readonly IUnitOfWork _unitOfWork;
         private readonly IBuyQueueManager _buyQueueManager;
         private readonly ITransportQueueManager _transportQueueManager;
-        
+ 
         public OrderManager(IUnitOfWork unitOfWork, IBuyQueueManager buyQueueManager, ITransportQueueManager transportQueueManager)
         {
             _unitOfWork = unitOfWork;
             _buyQueueManager = buyQueueManager;
             _transportQueueManager = transportQueueManager;
         }
-
-        public async Task CreatesOrder(OrderModel orderModel)
-        {
-            await _unitOfWork.OrderRepository.Create(orderModel);
-        }
-
-        public async Task OrderAvailableItem(int productId, int customerId)
+        
+        public async Task CreateOrderForAvailableItem(OrderModel orderModel, int productId, int customerId)
         {
             var product = await _unitOfWork.ProductRepository.GetProductByIdAsync(productId);
             var customer = await _unitOfWork.CustomerRepository.GetCustomerByIdAsync(customerId);
-            // var falseProduct = _unitOfWork.ProductRepository.GetAll().Where(p => p.IsAvailable == false);
-            //TODO: Сделать проверку на вхождение товара не в наличии.
-            
-            var orders = new OrderModel()
+
+            if (product.IsAvailable)
             {
-                Customers = customer,
-                Products = new List<ProductModel>()
-                {
-                    product,
-                },
-                IsDelivered = true,
-                IsSold = false,
-            };
-            await _unitOfWork.OrderRepository.AddAsync(orders);
+                orderModel.ProductId = product.Id;
+                orderModel.CustomerId = customer.Id;
+                orderModel.IsDelivered = true;
+                orderModel.IsSold = true;
+            }
+            await _unitOfWork.OrderRepository.Create(orderModel);
         }
-        
-        public async Task OrderNonAvailableItemAndAddingToTransportQueue(int productId, int customerId)
+
+        public async Task OrderNonAvailableItemToBuyQueue(OrderModel orderModel, int productId, int customerId)
         {
-            // добавляем продукт в заказ + на достовку ?
             var product = await _unitOfWork.ProductRepository.GetProductByIdAsync(productId);
-            var customers = await _unitOfWork.CustomerRepository.GetCustomerByIdAsync(customerId);
+            var customer = await _unitOfWork.CustomerRepository.GetCustomerByIdAsync(customerId);
             
-            var order = new OrderModel()
+            if (product.IsAvailable != true)
             {
-                IsDelivered = true,
-                IsSold = true,
-                Products = new List<ProductModel>()
-                {
-                    product,
-                },
-                Customers = customers
-            };
-            
-            // if (customers != null)
-            // {
-            //     order.Customer = customers;
-            // }
-            //
-            await _unitOfWork.OrderRepository.AddAsync(order);
-            await _transportQueueManager.AddItemInTransportQueues(productId);
-        }
+                orderModel.ProductId = product.Id;
+                orderModel.CustomerId = customer.Id;
+                orderModel.IsDelivered = false;
+                orderModel.IsSold = false;
+            }
 
-        public async Task OrderNonAvailableItemAndAddingToBuyQueue(int productId, int customerId)
-        {
-           // добавление продукта в заказ + добавление продукта в очередь на покупку
-           var product = await  _unitOfWork.ProductRepository.GetProductByIdAsync(productId);
-           var customers = await _unitOfWork.CustomerRepository.GetCustomerByIdAsync(customerId);
-           
-           var order = new OrderModel()
-           {
-               IsDelivered = false,
-               IsSold = false,
-               Products = new List<ProductModel>(productId)
-               {
-                   product
-               },
-           };
-           if (customers != null)
-           {
-               order.Customers = customers;
-           }
-           await _buyQueueManager.AddItemInBuyQueues(productId);
-           
+            await _unitOfWork.OrderRepository.Create(orderModel);
+            await _buyQueueManager.AddingToBuyQueue(productId);
         }
-
         
-        // public async Task OrderProduct(List<int> ids, int customerId)
-        // {
-        //     var product = await _unitOfWork.ProductRepository.GetProductListByIdAsync(ids); 
-        //     
-        //     // product.Where(p=>p.IsAvailable==true).ToList().ForEach(async p =>
-        //     // {
-        //     //     await OrderAvailableItem(p.Id, customerId);
-        //     // });
-        //     // await OrderNonAvailableItemAndAddingToTransportQueue(p.Id, customerId);
-        //     //
-        //     product.Where(p=>p.IsAvailable != true).ToList().ForEach(async p =>
-        //     {
-        //         await OrderNonAvailableItemAndAddingToBuyQueue(p.Id, customerId);
-        //     });
-        //     product.Where(p=>p.IsAvailable != true).ToList().ForEach(async p =>
-        //     {
-        //         await OrderNonAvailableItemAndAddingToTransportQueue(p.Id, customerId);
-        //     });
-        // }
+        public async Task OrderNonAvailableItemAndAddingToTransportQueue(OrderModel orderModel, int  buyQueueId)
+        {
+            var buyQueue = await _buyQueueManager.GetBuyQueuesByIdAsync(buyQueueId); 
+            var product = await _unitOfWork.ProductRepository.GetProductByIdAsync(buyQueue.ProductId);
+            
+            if (product.IsAvailable != true)
+            {
+                await _unitOfWork.OrderRepository.Update(orderModel);
+                await _unitOfWork.CommitAsync();
+                await _transportQueueManager.AddingToTransportQueue(buyQueueId);
+            }
+        }
+        
     }
 }
