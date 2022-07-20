@@ -5,10 +5,10 @@ namespace BLL.Interfaces
 {
     public interface IOrderManager
     {
-        Task CreatesOrder(OrderModel orderModel);
-        Task OrderAvailableItem(int productId, int customerId);
-        Task OrderNonAvailableItemAndAddingToBuyQueue(int productId, int customerId);
-        Task OrderNonAvailableItemAndAddingToTransportQueue(int productId, int customerId);
-        // Task OrderProduct(List<int> ids, int customerId);
+        Task CreateOrderForAvailableItem(OrderModel orderModel, int productId, int customerId);
+ 
+        Task OrderNonAvailableItemToBuyQueue(OrderModel orderModel, int productId, int customerId);
+
+        Task OrderNonAvailableItemAndAddingToTransportQueue(OrderModel orderModel, int buyQueueId);
     }
 }
