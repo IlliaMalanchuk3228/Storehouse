@@ -7,7 +7,6 @@ using DAL.Entities;
 
 namespace DAL.Repositories
 {
-    //Dobavit Poluchenie po ID
     public class Repository<TEntity> : IRepository<TEntity> where TEntity : class, new()
     {
         private readonly DataContext _dataContext;
@@ -29,10 +28,6 @@ namespace DAL.Repositories
             }
         }
 
-        // public async Task<TEntity> GetById(int id)
-        // {
-        //     return await _dataContext.Set<TEntity>().SingleOrDefaultAsync(x=>x.Id== id);
-        // }
         
         public async Task<TEntity> AddAsync(TEntity entity)
         {
