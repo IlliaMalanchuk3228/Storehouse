@@ -16,27 +16,30 @@ namespace BLL.Iml
         {
             _unitOfWork = unitOfWork;
         }
-
-        public async Task CreatesBuyQueue(BuyQueueModel buyQueueModel)
+         
+        public async Task CreateBuyQueue(BuyQueueModel buyQueueModel)
         {
             await _unitOfWork.BuyQueueRepository.Create(buyQueueModel);
         }
-        
-        public async Task AddItemInBuyQueues(int id)
+
+        public async Task<BuyQueueModel> GetBuyQueuesByIdAsync(int buyQueueId)
         {
-            var pr =  await _unitOfWork.ProductRepository.GetProductByIdAsync(id);
-            pr.IsAvailable = false;
-            await _unitOfWork.CommitAsync();
-           
-            var itemQueues = new BuyQueueModel()
+            return await _unitOfWork.BuyQueueRepository.GetBuyQueueByIdAsync(buyQueueId);
+        }
+        
+        public async Task AddingToBuyQueue(int productId)
+        {
+            var product = await _unitOfWork.ProductRepository.GetProductByIdAsync(productId);
+            
+            if (product.IsAvailable == false)
             {
-                IsBuying = true,
-                ProductModels = new List<ProductModel>()
+                var buyQueue = new BuyQueueModel()
                 {
-                    pr
-                },
-            };
-            await _unitOfWork.BuyQueueRepository.AddAsync(itemQueues);
+                    IsBuying = true,
+                    ProductId = product.Id
+                };
+                await _unitOfWork.BuyQueueRepository.Update(buyQueue);
+            }
         }
     }
 }   
