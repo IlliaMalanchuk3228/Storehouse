@@ -2,7 +2,7 @@ using System.Threading.Tasks;
 using BLL.Interfaces;
 using DAL.DataModels;
 using Microsoft.AspNetCore.Mvc;
-
+ 
 namespace Storehouse.Controllers
 {
     [ApiController]
@@ -16,20 +16,20 @@ namespace Storehouse.Controllers
             _transportQueueManager = transportQueueManager;
         }
         
-        //POST
-        [Route("createTrQueue")]
-        [HttpPost]
-        public async Task CreatesTransportQueue(TransportQueueModel transportQueueModel)
+        //GET
+        [Route("getTransportQueue")]
+        [HttpGet]
+        public async Task<TransportQueueModel> GetTransportQueues(int transportQueueId)
         {
-            await _transportQueueManager.CreatesTransportQueue(transportQueueModel);
+            return await _transportQueueManager.GetTransportQueueById(transportQueueId);
         }
-    
+        
         //POST
-        [Route("addInTrQueue")]
+        [Route("createTransportQueue")]
         [HttpPost]
-        public async Task AddItemInTransportQueue(int idItem)
+        public async Task CreatesTransportQueue(int buyQueueId)
         {
-            await _transportQueueManager.AddItemInTransportQueues(idItem);
+            await _transportQueueManager.AddingToTransportQueue(buyQueueId);
         }
         
     }
