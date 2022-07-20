@@ -1,7 +1,8 @@
 using System.Threading.Tasks;
 using BLL.Interfaces;
+using DAL.DataModels;
 using Microsoft.AspNetCore.Mvc;
-
+ 
 namespace Storehouse.Controllers
 {
     [ApiController]
@@ -16,33 +17,27 @@ namespace Storehouse.Controllers
         }
         
         //POST
-        [Route("nonAvailableAndToTransportQueue")]
+        [Route("nonAvailableItemAndToBuyQueue")]
         [HttpPost]
-        public async Task OrderNonAvailableItemsAndToTransportQueue(int productId, int customerId)
+        public async Task OrderNonAvailableItemsAndToBuyQueue(OrderModel orderModel, int productId, int customerId)
         {
-            await _orderManager.OrderNonAvailableItemAndAddingToTransportQueue(productId, customerId);
+            await _orderManager.OrderNonAvailableItemToBuyQueue(orderModel, productId, customerId);
         }
         
         //POST
-        [Route("nonAvailableAndToBuyQueue")]
-        [HttpPost]
-        public async Task OrderNonAvailableItemsAndToBuyQueue(int productId, int customerId)
+        [Route("nonAvailableItemAndToTransportQueue")]
+        [HttpPut]
+        public async Task OrderNonAvailableItemsAndToTransportQueue(OrderModel orderModel, int buyQueueId)
         {
-            await _orderManager.OrderNonAvailableItemAndAddingToBuyQueue(productId, customerId);
+            await _orderManager.OrderNonAvailableItemAndAddingToTransportQueue(orderModel,buyQueueId);
         }
         
         [Route("orderAvailableItem")]
         [HttpPost]
-        public async Task OrderAvailableItems(int productId, int customerId)
+        public async Task OrderAvailableItems(OrderModel orderModel, int productId, int customerId)
         {
-            await _orderManager.OrderAvailableItem(productId, customerId);
+            await _orderManager.CreateOrderForAvailableItem(orderModel, productId, customerId);
         }
         
-        // [Route("orderNonAvailableItem")]
-        // [HttpPost]
-        // public async Task OrderProducts(List<int> productIds, int customerId)
-        // { 
-        //     await _orderManager.OrderProduct(productIds, customerId);
-        // }
     }
 }
