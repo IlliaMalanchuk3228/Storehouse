@@ -5,7 +5,8 @@ namespace BLL.Interfaces
 {
     public interface IBuyQueueManager
     {
-        Task CreatesBuyQueue(BuyQueueModel buyQueueModel);
-        Task AddItemInBuyQueues (int id);
+        Task CreateBuyQueue(BuyQueueModel buyQueueModel);
+        Task<BuyQueueModel> GetBuyQueuesByIdAsync(int buyQueueId);
+        Task AddingToBuyQueue(int productId); 
     }
 }
