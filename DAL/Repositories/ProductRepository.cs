@@ -31,10 +31,6 @@ namespace DAL.Repositories
             return MapperInstance.Map<ProductModel>(entity);
         }
         
-        // public async Task<IEnumerable<ProductModel>> GetProductListByIdAsync(List<int> ids)
-        // {
-        //     // return await _dataContext.Products.Where(product => ids.Contains(product.Id)).ToListAsync();
-        // }
 
         private static Mapper BuildMapper
         {
