@@ -6,7 +6,7 @@ using DAL.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace DAL.Repositories
-{
+{ 
     public class OrderRepository : Repository<OrderModel>, IOrderRepository
     {
         private readonly DataContext _dataContext;
@@ -20,6 +20,13 @@ namespace DAL.Repositories
         {
             var entity = MapperInstance.Map<Order>(orderModel);
             _dataContext.Orders.Add(entity);
+            await _dataContext.SaveChangesAsync();
+        }
+
+        public async Task Update(OrderModel orderModel)
+        {
+            var entity = MapperInstance.Map<Order>(orderModel);
+            _dataContext.Orders.Update(entity);
             await _dataContext.SaveChangesAsync();
         }
         
