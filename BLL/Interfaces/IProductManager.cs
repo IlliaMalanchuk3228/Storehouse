@@ -6,7 +6,6 @@ namespace BLL.Interfaces
 {
     public interface IProductManager
     {
-       
         Task<ProductModel> GetProductsByIdAsync(int id);
         Task CreatesProductModel(ProductModel productModel);
     }
