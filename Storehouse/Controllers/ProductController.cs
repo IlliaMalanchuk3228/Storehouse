@@ -5,11 +5,11 @@ using Microsoft.AspNetCore.Mvc;
 using BLL.Interfaces;
 using DAL.DataModels;
 using DAL.Entities;
-
+ 
 namespace Storehouse.Controllers
 {
     [ApiController]
-    [Route("[controller]/product")]
+    [Route("[controller]")]
     public class ProductController : Controller
     {
         private readonly IProductManager _productManager;
@@ -19,20 +19,20 @@ namespace Storehouse.Controllers
         }
         
         //GET
-        [Route("take")]
+        [Route("getProduct")]
         [HttpGet]
         public async Task<ProductModel> GetProducts(int productId)
         {
             return await _productManager.GetProductsByIdAsync(productId);
         }
         
-
         //POST
-        [Route("create")]
+        [Route("createProduct")]
         [HttpPost]
         public async Task CreateProducts(ProductModel productModel)
         {
             await _productManager.CreatesProductModel(productModel);
         }
+        
     }
 }
