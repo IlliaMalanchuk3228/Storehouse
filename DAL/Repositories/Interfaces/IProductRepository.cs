@@ -9,6 +9,5 @@ namespace DAL.Repositories
     {
         Task<ProductModel> GetProductByIdAsync(int id);
         Task Create(ProductModel productModel);
-        // Task<IEnumerable<ProductModel>> GetProductListByIdAsync(List<int> ids);
     }
 }
