@@ -13,33 +13,25 @@ namespace BLL.Iml
 
         public TransportQueueManager(IUnitOfWork unitOfWork)
         {
-            this._unitOfWork = unitOfWork;
+            _unitOfWork = unitOfWork;
+        }
+        public async Task<TransportQueueModel> GetTransportQueueById(int transportQueueId)
+        {
+            return await _unitOfWork.TransportQueueRepository.GetTransportQueueById(transportQueueId);
         }
 
-        public async Task CreatesTransportQueue(TransportQueueModel transportQueueModel)
+        public async Task AddingToTransportQueue(int buyQueueId)
         {
-            await _unitOfWork.TransportQueueRepository.Create(transportQueueModel);
-        }
-        
-        public async Task AddItemInTransportQueues(int id)
-        {
-            var buyQueueItem = await _unitOfWork.BuyQueueRepository.GetBuyQueueByIdAsync(id);
-            
-            var pr = await _unitOfWork.ProductRepository.GetProductByIdAsync(buyQueueItem.ProductId);
-            
-            var itemQueue = new TransportQueueModel()
+            var buyQueueItem = await _unitOfWork.BuyQueueRepository.GetBuyQueueByIdAsync(buyQueueId);
+
+            var transportQueue = new TransportQueueModel()
             {
                 IsShipping = true,
-                BuyQueueModels = new List<BuyQueueModel>()
-                {
-                    buyQueueItem
-                },
-                ProductModels = new List<ProductModel>()
-                {
-                    pr
-                }
+                BuyQueueId = buyQueueItem.Id,
+                ProductId = buyQueueItem.ProductId
             };
-            await _unitOfWork.TransportQueueRepository.AddAsync(itemQueue);
+            await _unitOfWork.TransportQueueRepository.Create(transportQueue);
         }
+        
     }
 }
