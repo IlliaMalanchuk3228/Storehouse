@@ -1,2 +1,2 @@
 # Storehouse
-##EF Core, AutoMapper, Web Api
+## EF Core, AutoMapper, Web Api
